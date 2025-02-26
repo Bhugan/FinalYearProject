@@ -1,4 +1,4 @@
-
+pip install spacy
 import streamlit as st
 import PyPDF2
 import nltk
