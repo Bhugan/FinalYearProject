@@ -12,6 +12,15 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.text_rank import TextRankSummarizer
 from transformers import pipeline
+import spacy
+import subprocess
+
+# Check if the model is available, otherwise download it
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    nlp = spacy.load("en_core_web_sm")
 
 # Load NLP model
 nlp = spacy.load("en_core_web_sm")
