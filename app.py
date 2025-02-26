@@ -1,3 +1,5 @@
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 import streamlit as st
 import PyPDF2
 import nltk
@@ -15,12 +17,19 @@ from transformers import pipeline
 import spacy
 import subprocess
 
-# Check if the model is available, otherwise download it
+# Check if the SpaCy model is installed, otherwise install it
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
     nlp = spacy.load("en_core_web_sm")
+import asyncio
+
+try:
+    asyncio.get_running_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
 
 # Load NLP model
 nlp = spacy.load("en_core_web_sm")
