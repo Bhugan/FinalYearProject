@@ -1,0 +1,12 @@
+streamlit
+PyPDF2
+nltk
+spacy
+matplotlib
+seaborn
+wordcloud
+vaderSentiment
+scikit-learn
+gensim
+sumy
+transformers
