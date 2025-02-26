@@ -10,4 +10,4 @@ scikit-learn
 gensim
 sumy
 transformers
-spacy
+spacy[transformers]
