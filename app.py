@@ -1,5 +1,3 @@
-!pip install spacy
-
 import streamlit as st
 import PyPDF2
 import nltk
@@ -14,21 +12,23 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.text_rank import TextRankSummarizer
 from transformers import pipeline
-import spacy
+import os
 import subprocess
 
-# Check if the SpaCy model is installed, otherwise install it
+# Install SpaCy if not installed
+try:
+    import spacy
+except ImportError:
+    subprocess.run(["pip", "install", "spacy"])
+    import spacy
+
+# Ensure the 'en_core_web_sm' model is available
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
     nlp = spacy.load("en_core_web_sm")
-import asyncio
 
-try:
-    asyncio.get_running_loop()
-except RuntimeError:
-    asyncio.set_event_loop(asyncio.new_event_loop())
 
 
 # Load NLP model
