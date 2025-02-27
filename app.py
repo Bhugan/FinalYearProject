@@ -127,6 +127,7 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             plt.imshow(wordcloud, interpolation='bilinear')
             plt.axis("off")
             st.pyplot(plt)
+            plt.close()
             st.subheader("Named Entity Recognition")
             st.write(ents)
             download_text(str(ents), "Named_Entities.txt")
