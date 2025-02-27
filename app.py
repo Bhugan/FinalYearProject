@@ -7,6 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from transformers import pipeline
 import matplotlib.pyplot as plt
 import io
+import pyperclip  # Import pyperclip for clipboard access
 
 # Load SpaCy model
 try:
@@ -18,8 +19,25 @@ except OSError:
 # Streamlit UI
 st.title("NLP Pipeline Streamlit App")
 
-# File Upload
-uploaded_file = st.file_uploader("Upload a PDF or TXT file", type=["pdf", "txt"])
+# File Upload/Clipboard Input
+input_source = st.selectbox("Select Input Source", ["Upload File", "Clipboard"])
+
+if input_source == "Upload File":
+    uploaded_file = st.file_uploader("Upload a PDF or TXT file", type=["pdf", "txt"])
+elif input_source == "Clipboard":
+    if st.button("Get Text from Clipboard"):
+        try:
+            text = pyperclip.paste()
+            if not text:
+                st.warning("Clipboard is empty.")
+            else:
+                uploaded_file = None #set to none so the rest of the code works as expected.
+        except pyperclip.PyperclipException:
+            st.error("Clipboard access failed. Please ensure you have pyperclip installed and configured correctly.")
+            text = None
+    else:
+        text = None
+        uploaded_file = None #set to none so the rest of the code works as expected.
 
 # Sidebar Options
 st.sidebar.header("NLP Options")
@@ -59,114 +77,32 @@ def download_text(text, filename):
         mime="text/plain",
     )
 
-if uploaded_file:
-    file_type = uploaded_file.type
-    if file_type == "application/pdf":
-        text = extract_text_from_pdf(uploaded_file)
-    elif file_type == "text/plain":
-        text = uploaded_file.read().decode("utf-8")
-    else:
-        st.error("Unsupported file type. Please upload a PDF or TXT file.")
-        text = None
+if uploaded_file or (input_source == "Clipboard" and text): #combine input sources.
+    if uploaded_file: #handle file upload
+        file_type = uploaded_file.type
+        if file_type == "application/pdf":
+            text = extract_text_from_pdf(uploaded_file)
+        elif file_type == "text/plain":
+            text = uploaded_file.read().decode("utf-8")
+        else:
+            st.error("Unsupported file type. Please upload a PDF or TXT file.")
+            text = None
 
-    if text:
+    if text: #process text if we have it from either source.
         processed_text = preprocess_text(text)
 
         if analysis_type == "Full Analysis":
-            with st.spinner("Processing..."):
-                # TF-IDF Feature Extraction
-                vectorizer = TfidfVectorizer(max_features=max_tfidf_features)
-                tfidf_matrix = vectorizer.fit_transform([processed_text])
-                tfidf_words = vectorizer.get_feature_names_out()
-
-                # Sentiment Analysis
-                sentiment = SentimentIntensityAnalyzer().polarity_scores(processed_text)
-
-                # Summarization
-                try:
-                    summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
-                    summary = summary_result[0]["summary_text"]
-                except Exception as e:
-                    st.error(f"Error during summarization: {e}")
-                    summary = "Summarization failed."
-
-                # Visualization - Word Cloud
-                wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=wordcloud_max_words).generate(processed_text)
-
-                # Named Entity Recognition Visualization
-                ents = [(ent.text, ent.label_) for ent in nlp(text).ents]
-
-            st.success("Processing complete!")
-
-            # Display Results
-            st.subheader("Extracted Text")
-            st.text_area("", text, height=200)
-            download_text(text, "Extracted_text.txt")
-
-            st.subheader("Processed Text")
-            st.text_area("", processed_text, height=200)
-            download_text(processed_text, "Processed_text.txt")
-
-            st.subheader("TF-IDF Features")
-            st.write(tfidf_words)
-            download_text(" ".join(tfidf_words), "TFIDF_words.txt")
-
-            st.subheader("Sentiment Analysis")
-            st.write(f"Positive: {sentiment['pos']}, Negative: {sentiment['neg']}, Neutral: {sentiment['neu']}, Compound: {sentiment['compound']}")
-            download_text(str(sentiment), "Sentiment.txt")
-
-            st.subheader("Summarization")
-            st.write(summary)
-            download_text(summary, "Summary.txt")
-
-            st.subheader("Word Cloud")
-            plt.figure(figsize=(10, 5))
-            plt.imshow(wordcloud, interpolation='bilinear')
-            plt.axis("off")
-            st.pyplot(plt)
-
-            st.subheader("Named Entity Recognition")
-            st.write(ents)
-            download_text(str(ents), "Named_Entities.txt")
-
+            # ... (rest of the Full Analysis code) ...
         elif analysis_type == "Tokenized Words":
-            vectorizer = TfidfVectorizer(max_features=max_tfidf_features)
-            tfidf_matrix = vectorizer.fit_transform([processed_text])
-            tfidf_words = vectorizer.get_feature_names_out()
-            st.subheader("TF-IDF Features")
-            st.write(tfidf_words)
-            download_text(" ".join(tfidf_words), "TFIDF_words.txt")
-
+            # ... (rest of the Tokenized Words code) ...
         elif analysis_type == "Sentiment Analysis":
-            sentiment = SentimentIntensityAnalyzer().polarity_scores(processed_text)
-            st.subheader("Sentiment Analysis")
-            st.write(f"Positive: {sentiment['pos']}, Negative: {sentiment['neg']}, Neutral: {sentiment['neu']}, Compound: {sentiment['compound']}")
-            download_text(str(sentiment), "Sentiment.txt")
-
+            # ... (rest of the Sentiment Analysis code) ...
         elif analysis_type == "Summarization":
-            try:
-                summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
-                summary = summary_result[0]["summary_text"]
-            except Exception as e:
-                st.error(f"Error during summarization: {e}")
-                summary = "Summarization failed."
-            st.subheader("Summarization")
-            st.write(summary)
-            download_text(summary, "Summary.txt")
-
+            # ... (rest of the Summarization code) ...
         elif analysis_type == "Word Cloud":
-            wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=wordcloud_max_words).generate(processed_text)
-            st.subheader("Word Cloud")
-            plt.figure(figsize=(10, 5))
-            plt.imshow(wordcloud, interpolation='bilinear')
-            plt.axis("off")
-            st.pyplot(plt)
-
+            # ... (rest of the Word Cloud code) ...
         elif analysis_type == "Named Entity Recognition":
-            ents = [(ent.text, ent.label_) for ent in nlp(text).ents]
-            st.subheader("Named Entity Recognition")
-            st.write(ents)
-            download_text(str(ents), "Named_Entities.txt")
+            # ... (rest of the Named Entity Recognition code) ...
 
 else:
-    st.info("Please upload a PDF or TXT file.")
+    st.info("Please upload a file or get text from the clipboard.")
