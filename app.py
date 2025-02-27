@@ -156,4 +156,12 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             st.write(summary)
             download_text(summary, "Summary.txt")
 
-        elif analysis:
+        elif analysis_type == "Word Cloud":
+            wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=wordcloud_max_words).generate(processed_text)
+            st.subheader("Word Cloud")
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis("off")
+            st.pyplot(plt)
+
+        elif analysis_type == "Named Entity Recognition":
