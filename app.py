@@ -149,19 +149,3 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             try:
                 summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
                 summary = summary_result[0]["summary_text"]
-            except Exception as e:
-                st.error(f"Error during summarization: {e}")
-                summary = "Summarization failed."
-            st.subheader("Summarization")
-            st.write(summary)
-            download_text(summary, "Summary.txt")
-
-        elif analysis_type == "Word Cloud":
-            wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=wordcloud_max_words).generate(processed_text)
-            st.subheader("Word Cloud")
-            plt.figure(figsize=(10, 5))
-            plt.imshow(wordcloud, interpolation='bilinear')
-            plt.axis("off")
-            st.pyplot(plt)
-
-        elif analysis_type == "Named Entity Recognition":
