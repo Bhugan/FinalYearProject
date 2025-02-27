@@ -84,7 +84,8 @@ if uploaded_file:
 
                 # Summarization
                 try:
-                    summary = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)["summary_text"]
+                    summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
+                    summary = summary_result[0]["summary_text"]
                 except Exception as e:
                     st.error(f"Error during summarization: {e}")
                     summary = "Summarization failed."
@@ -144,7 +145,8 @@ if uploaded_file:
 
         elif analysis_type == "Summarization":
             try:
-                summary = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)["summary_text"]
+                summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
+                summary = summary_result[0]["summary_text"]
             except Exception as e:
                 st.error(f"Error during summarization: {e}")
                 summary = "Summarization failed."
