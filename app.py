@@ -31,13 +31,13 @@ elif input_source == "Clipboard":
             if not text:
                 st.warning("Clipboard is empty.")
             else:
-                uploaded_file = None #set to none so the rest of the code works as expected.
+                uploaded_file = None  # set to none so the rest of the code works as expected.
         except pyperclip.PyperclipException:
             st.error("Clipboard access failed. Please ensure you have pyperclip installed and configured correctly.")
             text = None
     else:
         text = None
-        uploaded_file = None #set to none so the rest of the code works as expected.
+        uploaded_file = None  # set to none so the rest of the code works as expected.
 
 # Sidebar Options
 st.sidebar.header("NLP Options")
@@ -77,8 +77,8 @@ def download_text(text, filename):
         mime="text/plain",
     )
 
-if uploaded_file or (input_source == "Clipboard" and text): #combine input sources.
-    if uploaded_file: #handle file upload
+if uploaded_file or (input_source == "Clipboard" and text):  # combine input sources.
+    if uploaded_file:  # handle file upload
         file_type = uploaded_file.type
         if file_type == "application/pdf":
             text = extract_text_from_pdf(uploaded_file)
@@ -88,7 +88,7 @@ if uploaded_file or (input_source == "Clipboard" and text): #combine input sourc
             st.error("Unsupported file type. Please upload a PDF or TXT file.")
             text = None
 
-    if text: #process text if we have it from either source.
+    if text:  # process text if we have it from either source.
         processed_text = preprocess_text(text)
 
         if analysis_type == "Full Analysis":
@@ -165,3 +165,5 @@ if uploaded_file or (input_source == "Clipboard" and text): #combine input sourc
             st.pyplot(plt)
 
         elif analysis_type == "Named Entity Recognition":
+            ents = [(ent.text, ent.label_) for ent in nlp(text).ents]
+            st.subheader("Named
