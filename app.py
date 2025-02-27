@@ -165,5 +165,4 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             st.pyplot(plt)
 
         elif analysis_type == "Named Entity Recognition":
-            ents = [(ent.text, ent.label_) for ent in nlp(text).ents]
-            st.subheader("Named
+            ents = [(ent.text, ent.label_)
