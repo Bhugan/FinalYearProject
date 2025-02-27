@@ -94,7 +94,13 @@ if uploaded_file or (input_source == "Clipboard" and text): #combine input sourc
         if analysis_type == "Full Analysis":
             # ... (rest of the Full Analysis code) ...
         elif analysis_type == "Tokenized Words":
-            # ... (rest of the Tokenized Words code) ...
+            vectorizer = TfidfVectorizer(max_features=max_tfidf_features)
+            tfidf_matrix = vectorizer.fit_transform([processed_text])
+            tfidf_words = vectorizer.get_feature_names_out()
+            st.subheader("TF-IDF Features")
+            st.write(tfidf_words)
+            download_text(" ".join(tfidf_words), "TFIDF_words.txt")
+
         elif analysis_type == "Sentiment Analysis":
             # ... (rest of the Sentiment Analysis code) ...
         elif analysis_type == "Summarization":
