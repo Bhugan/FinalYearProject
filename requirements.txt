@@ -1,14 +1,14 @@
 streamlit
-  PyPDF2
-  spacy
-  wordcloud
-  vaderSentiment
-  scikit-learn
-  transformers
-  matplotlib
-  pyperclip
-  numpy>=1.26.0 #Add this line
-  thinc>=8.2.0 #Add this line
-  en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
-  tensorflow
-  tf-keras
+PyPDF2
+spacy
+wordcloud
+vaderSentiment
+scikit-learn
+transformers
+matplotlib
+pyperclip
+numpy>=1.26.0
+thinc>=8.2.0
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
+tensorflow
+tf-keras
