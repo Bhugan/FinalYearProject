@@ -165,4 +165,4 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             st.pyplot(plt)
 
         elif analysis_type == "Named Entity Recognition":
-            ents = [(ent.text, ent.label_)
+            ents = [(ent.text, ent.label_)]
