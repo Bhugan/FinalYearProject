@@ -36,7 +36,8 @@ if uploaded_file:
 
     # TF-IDF Feature Extraction
     vectorizer = TfidfVectorizer(max_features=50)
-    tfidf_words = vectorizer.fit_transform([processed_text]).get_feature_names_out()
+    tfidf_matrix = vectorizer.fit_transform([processed_text])
+    tfidf_words = vectorizer.get_feature_names_out()
     st.subheader("TF-IDF Features")
     st.write(tfidf_words)
 
