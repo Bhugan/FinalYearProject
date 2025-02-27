@@ -92,7 +92,45 @@ if uploaded_file or (input_source == "Clipboard" and text): #combine input sourc
         processed_text = preprocess_text(text)
 
         if analysis_type == "Full Analysis":
-            # ... (rest of the Full Analysis code) ...
+            with st.spinner("Processing..."):
+                vectorizer = TfidfVectorizer(max_features=max_tfidf_features)
+                tfidf_matrix = vectorizer.fit_transform([processed_text])
+                tfidf_words = vectorizer.get_feature_names_out()
+                sentiment = SentimentIntensityAnalyzer().polarity_scores(processed_text)
+                try:
+                    summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
+                    summary = summary_result[0]["summary_text"]
+                except Exception as e:
+                    st.error(f"Error during summarization: {e}")
+                    summary = "Summarization failed."
+                wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=wordcloud_max_words).generate(processed_text)
+                ents = [(ent.text, ent.label_) for ent in nlp(text).ents]
+
+            st.success("Processing complete!")
+            st.subheader("Extracted Text")
+            st.text_area("", text, height=200)
+            download_text(text, "Extracted_text.txt")
+            st.subheader("Processed Text")
+            st.text_area("", processed_text, height=200)
+            download_text(processed_text, "Processed_text.txt")
+            st.subheader("TF-IDF Features")
+            st.write(tfidf_words)
+            download_text(" ".join(tfidf_words), "TFIDF_words.txt")
+            st.subheader("Sentiment Analysis")
+            st.write(f"Positive: {sentiment['pos']}, Negative: {sentiment['neg']}, Neutral: {sentiment['neu']}, Compound: {sentiment['compound']}")
+            download_text(str(sentiment), "Sentiment.txt")
+            st.subheader("Summarization")
+            st.write(summary)
+            download_text(summary, "Summary.txt")
+            st.subheader("Word Cloud")
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis("off")
+            st.pyplot(plt)
+            st.subheader("Named Entity Recognition")
+            st.write(ents)
+            download_text(str(ents), "Named_Entities.txt")
+
         elif analysis_type == "Tokenized Words":
             vectorizer = TfidfVectorizer(max_features=max_tfidf_features)
             tfidf_matrix = vectorizer.fit_transform([processed_text])
@@ -102,13 +140,28 @@ if uploaded_file or (input_source == "Clipboard" and text): #combine input sourc
             download_text(" ".join(tfidf_words), "TFIDF_words.txt")
 
         elif analysis_type == "Sentiment Analysis":
-            # ... (rest of the Sentiment Analysis code) ...
-        elif analysis_type == "Summarization":
-            # ... (rest of the Summarization code) ...
-        elif analysis_type == "Word Cloud":
-            # ... (rest of the Word Cloud code) ...
-        elif analysis_type == "Named Entity Recognition":
-            # ... (rest of the Named Entity Recognition code) ...
+            sentiment = SentimentIntensityAnalyzer().polarity_scores(processed_text)
+            st.subheader("Sentiment Analysis")
+            st.write(f"Positive: {sentiment['pos']}, Negative: {sentiment['neg']}, Neutral: {sentiment['neu']}, Compound: {sentiment['compound']}")
+            download_text(str(sentiment), "Sentiment.txt")
 
-else:
-    st.info("Please upload a file or get text from the clipboard.")
+        elif analysis_type == "Summarization":
+            try:
+                summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
+                summary = summary_result[0]["summary_text"]
+            except Exception as e:
+                st.error(f"Error during summarization: {e}")
+                summary = "Summarization failed."
+            st.subheader("Summarization")
+            st.write(summary)
+            download_text(summary, "Summary.txt")
+
+        elif analysis_type == "Word Cloud":
+            wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=wordcloud_max_words).generate(processed_text)
+            st.subheader("Word Cloud")
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis("off")
+            st.pyplot(plt)
+
+        elif analysis_type == "Named Entity Recognition":
