@@ -146,7 +146,8 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             st.write(f"Positive: {sentiment['pos']}, Negative: {sentiment['neg']}, Neutral: {sentiment['neu']}, Compound: {sentiment['compound']}")
             download_text(str(sentiment), "Sentiment.txt")
 
-        elif analysis_type == "Summarization":
-            try:
-                summary_result = pipeline("summarization")(text, max_length=summary_max_length, min_length=summary_min_length, do_sample=False)
-                summary = summary_result[0]["summary_text"]
+        elif analysis_type == "Named Entity Recognition":
+            ents = [(ent.text, ent.label_) for ent in nlp(text).ents]
+            st.subheader("Named Entity Recognition")
+            st.write(ents)
+            download_text(str(ents), "Named_Entities.txt")
