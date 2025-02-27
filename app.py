@@ -156,4 +156,4 @@ if uploaded_file or (input_source == "Clipboard" and text):  # combine input sou
             st.write(summary)
             download_text(summary, "Summary.txt")
 
-        elif analysis
+        elif analysis:
