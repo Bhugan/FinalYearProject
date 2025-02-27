@@ -105,17 +105,19 @@ if uploaded_file:
         st.subheader("Named Entity Recognition")
         st.write(ents)
         #Download buttons
-        def download_text(text, filename):
-            buffer = io.StringIO(text)
-            st.download_button(
-                label=f"Download {filename}",
-                data=buffer,
-                file_name=filename,
-                mime="text/plain",
-            )
-        download_text(text,"Extracted_text.txt")
-        download_text(processed_text,"Processed_text.txt")
-        download_text(summary,"Summary.txt")
+# ... (rest of your code) ...
+
+#Download buttons
+def download_text(text, filename):
+    st.download_button(
+        label=f"Download {filename}",
+        data=text.encode("utf-8"),
+        file_name=filename,
+        mime="text/plain",
+    )
+download_text(text,"Extracted_text.txt")
+download_text(processed_text,"Processed_text.txt")
+download_text(summary,"Summary.txt")
 
 else:
     st.info("Please upload a PDF or TXT file.")
